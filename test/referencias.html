@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <form action="" id="formulario-test">
+    <div>
+      <label for="apellidos">Apellidos</label>
+      <input type="text" id="apellidos">
+    </div>
+    <div>
+      <label for="nombres">Nombres</label>
+      <input type="text" id="nombres">
+    </div>
+    <div>
+      <label for="carrera">Carrera</label>
+      <select name="carrera" id="carrera">
+        <option value="">Seleccione</option>
+        <option value="1">Ingenieria de Software</option>
+        <option value="2">Diseño Grafico Digital</option>
+        <option value="3">Soldador</option>
+        <option value="4">Administrador</option>
+        <option value="5">Mecánico</option>
+      </select>
+    </div>
+    <button id="mostrar" type="button">Mostrar</button>
+    <button id="leer" type="button">Leer Datos</button>
+    <button id="reiniciar" type="button">Reiniciar</button>
+    <button id="saludar" type="button">Saludar</button>
+  </form>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      // Para referenciar objetos de manera rapida (estilo JQuery)
+      // Crearemos una función que solicite un ID y retorne la refernecia
+      function $(id){
+        return document.querySelector(id);
+      }
+/* 
+      const formulario = document.querySelector("#formulario-test"); //Formulario
+      const apellidos = document.querySelector("#apellidos"); //Input
+      const nombres = document.querySelector("#nombres");     //Input
+      const mostrar = document.querySelector("#mostrar");     //Input
+
+      const carrera = document.querySelector("#carrera");   //Boton
+      const leer = document.querySelector("#leer");         //Boton
+      const reiniciar = document.querySelector("#reiniciar"); //Boton
+ */
+      $("#mostrar").addEventListener("click", () => {
+        // Asignar Valores
+        $("#apellidos").value = "Villegas Salazar";
+        $("#nombres").value = "Luis";
+        $("#carrera").value = 3;
+      });
+
+      $("#leer").addEventListener("click", () => {
+      // Leer
+        console.log($("#apellidos").value);
+        console.log($("#nombres")).value;
+        console.log($("#carrera")).value;
+      });
+
+      $("#reiniciar").addEventListener("click", () => {
+        $("#formulario-test").reset();
+      });
+
+      $("#saludar").addEventListener("click", () => {
+        alert(
+          $("#apellidos").value + "\n" + 
+          $("#nombres").value  + "\n" + 
+          $("#carrera").value
+        );
+      });
+    });
+  </script>
+</body>
+</html>

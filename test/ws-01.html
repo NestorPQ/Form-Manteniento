@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <div>
+    <h4>Nombre Personaje</h4>
+    <form action="">
+      <div>
+        <label for="estatura">Estatura</label>
+        <input type="text" id="estatura">
+      </div>
+      <br>
+      <div>
+        <label for="peso">Peso</label>
+        <input type="text" id="peso">
+      </div>
+    </form>
+
+    <h5>Películas</h5>
+    <ul>
+      <li>Por Consultar....</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <input type="text" id="codigo" placeholder="Código de Personaje">
+  <button type="button" id="consultar">Consultar Datos</button>
+  
+  <script src="./funciones.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      $("#consultar").addEventListener("click", () => {
+        let codigo = parseInt($("#codigo").value);
+        let url = `https://swapi.dev/api/people/${codigo}/`;
+
+        fetch(url)
+          .then(respuesta => respuesta.json())
+          .then(datosRecibidos => {
+            // console.log(datosRecibidos);
+            // Enviando el nombre del Personaje
+            $("h4").innerHTML = datosRecibidos.name;
+
+            // Enviando estatura y peso
+            $("#estatura").value = datosRecibidos.height;
+            $("#peso").value = datosRecibidos.mass;
+
+            // Almacenar todas las películas en un objeto (colección)
+            const peliculas = datosRecibidos.films;
+            if (peliculas.length == 0) {
+              // No hay peliculas
+              $("ul").innerHTML = "<li>No encontramos Peliculas</li>";
+            }else{
+              // Eliminar todo el contenido de <ul>
+              $("ul").innerHTML = "";
+              // Renderizar en <ul>
+              peliculas.forEach(element => {
+                // Crear objeto <li>
+                const nuevoItem = document.createElement("li");
+                // Asignar datos al nuevo objeto
+                nuevoItem.innerHTML = element;
+                // Agregar el nuevo <li> a la lista <ul>
+                $("ul").appendChild(nuevoItem);
+              });
+            }
+          })
+          .catch(e => {
+            resetUI();
+            console.error(e);
+          });
+      });
+
+      function resetUI(){
+        $("h4").innerHTML = "No encontrado";
+        $("#estatura").value = "";
+        $("#peso").value = "";
+        $("ul").innerHTML = "<li>Nada que Mostrar</li>"
+      }
+
+    })
+  </script>
+
+</body>
+</html>

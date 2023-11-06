@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <title>Title</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS v5.2.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+</head>
+
+<body>
+  
+  <div class="container mt-4">
+
+    <!-- Primer card - Buscador -->
+    <div class="card">
+      <div class="card-header bg-primary text-light">
+        Búsqueda de personajes del universo de <strong>StarWars</strong>
+      </div>
+      <div class="card-body">
+        <div class="input-group">
+          <input type="text" id="codigo-personaje" class="form-control" placeholder="Escriba código del personaje" autofocus>
+          <button class="btn btn-success" type="button" id="buscar-personaje">Buscar</button>
+        </div>
+      </div>
+    </div>
+    <!-- Fin primer card -->
+
+    <!-- Lista 1 - datos generales-->
+    <ul class="list-group mt-3">
+      <li class="list-group-item">Nombre: <strong id="nombre_p"></strong></li>
+      <li class="list-group-item">Estatura: <strong id="estatura_p"></strong></li>
+      <li class="list-group-item">Peso: <strong id="peso_p"></strong></li>
+    </ul>
+    <!-- Fin lista 1 -->
+
+    <!-- Lista 2 - Películas -->
+    <div class="alert alert-primary mt-3" role="alert">
+      <span>Películas donde aparece</span>    
+    </div>
+    <div class="card">
+      <div class="card-body" id="lista-peliculas">
+        <!-- Aquí se renderizan los botones para las películas -->
+      </div>
+    </div>
+    <!-- fin lista 2 -->
+
+    <!-- Lista 3 - Datos de la película -->
+    <div class="alert alert-info mt-3" role="alert">
+      <span>Información de la película</span>
+    </div>
+    <ul class="list-group mt-3">
+      <li class="list-group-item">Título: <strong id="titulo_p"></strong></li>
+      <li class="list-group-item">Director: <strong id="director_p"></strong></li>
+    </ul>
+
+    <div class="row">
+      <div class="col-md-12 text-end">
+        <small id="loading" class="d-none">Buscando por favor espere</small>
+      </div>
+    </div>
+    <!-- Fin lista 3 -->
+
+  </div>
+
+  <!-- Bootstrap JavaScript Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+  </script>
+
+  <style>
+    a > img {
+      pointer-events: none;
+    }
+  </style>
+
+
+  <script src="./funciones.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      //Función para buscar
+      function buscarPersonaje(){
+        const codigo = parseInt($("#codigo-personaje").value);
+        const URL = `https://swapi.dev/api/people/${codigo}/`;
+
+        fetch(URL)
+          .then(respuesta => respuesta.json())
+          .then(datos => {
+            //Renderizando datos generales
+            $("#nombre_p").innerHTML = datos.name;
+            $("#estatura_p").innerHTML = datos.height;
+            $("#peso_p").innerHTML = datos.mass;
+
+            //Renderizando películas
+            const peliculas = datos.films;
+            $("#lista-peliculas").innerHTML = "";
+            
+            if (peliculas.length > 0){
+              peliculas.forEach(element => {
+                //Nueva imagen a renderizar
+                const nuevoBoton = document.createElement("a");
+                const nuevaImagen = document.createElement("img");
+
+                //Agregamos la imagen 
+                nuevaImagen.setAttribute("src", "./pelicula.png");
+
+                //Agregamos la dirección del WS de consulta
+                nuevoBoton.classList.add("pelicula"); //identificador
+                nuevoBoton.setAttribute("href", "#");
+                nuevoBoton.setAttribute("data-ws", element)
+
+                //Agregamos la imagen al enlace
+                nuevoBoton.appendChild(nuevaImagen);
+                
+                //Agregamos el nuevo botón
+                $("#lista-peliculas").appendChild(nuevoBoton);
+              });
+            }
+          })
+          .catch(e => {
+            console.error(e)
+          });
+      }
+
+      function mostrarDatosPelicula(URL_PELICULA){
+        $("#loading").classList.remove("d-none");
+        fetch(URL_PELICULA)
+          .then(respuesta => respuesta.json())
+          .then(datos => {
+            $("#titulo_p").innerHTML = datos.title;
+            $("#director_p").innerHTML = datos.director;
+            $("#loading").classList.add("d-none");
+          })
+          .catch(e => {
+            console.error(e);
+          });
+      }
+
+      //Eventos detectar el click en cada botón
+      //event = OBJETO que contiene toda la información del evento click
+      $("#lista-peliculas").addEventListener("click", (event) => {
+        //Si al elemento que pulsaste clic, contiene la clase pelicula...
+        if (event.target.classList.contains("pelicula")){
+          //dataset.valor (data-valor)
+          const URL = event.target.dataset.ws;
+          mostrarDatosPelicula(URL);
+        }
+      });
+
+      $("#buscar-personaje").addEventListener("click", () => {
+        buscarPersonaje();
+      });
+
+      $("#codigo-personaje").addEventListener("keypress", (event) => {
+        if (event.keyCode == 13){
+          buscarPersonaje();
+        }
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

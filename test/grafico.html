@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gráfico 1</title>
+</head>
+
+<body>
+
+  <!-- Canvas = lienzo 2D/3D https://threejs.org/ -->
+  <div>
+    <canvas id="migrafico"></canvas>
+  </div>
+
+
+
+  <!-- CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // const contexto = document.querySelector("#migrafico");
+    const contexto = document.getElementById("migrafico");
+
+    //  Constuctor(refCanvas, {parámetros...}, options)
+    const grafico = new Chart(contexto, {
+      type: 'bar',
+      data: {
+        labels: ["HP", "Lenovo", "Acer", "Dell"],
+        datasets: [{
+          label: 'Enero',
+          data: [25, 60, 90, 40],
+          borderWidth: 3
+        }, {
+          // labels: ["HP", "Lenovo", "Acer", "Dell"],
+
+          label: 'Febrero',
+          data: [25, 60, 90, 40],
+          borderWidth: 3
+        }]
+      }
+    });
+
+
+  </script>
+</body>
+
+</html>

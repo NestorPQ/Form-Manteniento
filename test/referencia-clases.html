@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <ul>
+    <li><a href="#" class="senati">Opción 1</a></li>
+    <li><a href="#">Opción 2</a></li>
+    <li><a href="#" class="senati">Opción 3</a></li>
+    <li><a href="#">Opción 4</a></li>
+    <li><a href="#" class="senati">Opción 5</a></li>
+    <li><a href="#">Opción 6</a></li>
+    <li><a href="#" class="senati">Opción 7</a></li>
+    <li><a href="#">Opción 8</a></li>
+    <li><a href="#" class="senati">Opción 9</a></li>
+    <li><a href="#">Opción 10</a></li>
+  </ul>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      function $(id){
+        return document.querySelector(id);
+      }
+
+      // Solo la Primera
+      $("a").addEventListener("click", () => {
+        console.log("Primera etiqueta <a>");
+      });
+
+      // Todas las Etiquetas <a>
+      const coleccion = document.querySelectorAll("a");
+      coleccion.forEach(element => {
+        element.addEventListener("click", () => {
+          console.log("¡Soy una etiqueta <a>!")
+        })
+      });
+
+      // Todas las clases Senati
+      const colecSenati = document.querySelectorAll(".senati");
+      colecSenati.forEach(elementS => {
+        elementS.addEventListener("click", () => {
+          console.log("Soy la clase Senati");
+        })
+      });
+    })
+  </script>
+
+</body>
+</html>
