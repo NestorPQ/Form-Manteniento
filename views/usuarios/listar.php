@@ -154,6 +154,7 @@
           // document.querySelector("#modalTitleId").innerHTML = nombre;
 
           if (ruta) {
+            // console.log(ruta);
             // Verificar si la ruta de la imagen existe antes de asignarla al atributo "src"
             fetch(`../../images/users/${ruta}`)
               .then((response) => {
@@ -178,7 +179,7 @@
           document.querySelector("#modalTitleId").innerHTML = nombre;
 
           modalVisor.toggle();
-          console.log(event);
+          // console.log(event);
         }
 
         if (event.target.classList.contains("eliminar")) {

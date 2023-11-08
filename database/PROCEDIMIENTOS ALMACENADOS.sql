@@ -153,17 +153,99 @@ BEGIN
 END $$
 
 DELIMITER $$
-CREATE PROCEDURE sp_listar_caracteristicas_por_producto(idproducto  INT)
+CREATE PROCEDURE sp_listar_caracteristicas_por_producto(_idproducto  INT)
 BEGIN
     SELECT 
         caracteristica, 
         valor
         FROM especificaciones
-        WHERE   idproducto = idproducto 
+        WHERE   idproducto = _idproducto 
         AND     inactive_at IS NULL;
 END $$
 
-call sp_listar_caracteristicas_por_producto(2);
+call sp_listar_caracteristicas_por_producto(1);
+
+
+DELIMITER $$
+CREATE PROCEDURE GenerarCodigoUsuario(IN usuario_identifier VARCHAR(60), IN codigo_generado VARCHAR(6))
+BEGIN
+    DECLARE usuario_id INT;
+
+    -- Buscar al usuario según el correo electrónico o el número de teléfono
+    SELECT idusuario INTO usuario_id FROM usuarios WHERE email = usuario_identifier OR telefono = usuario_identifier;
+
+    -- Si se encontró un usuario, asignar el código
+    IF usuario_id IS NOT NULL THEN
+        UPDATE usuarios SET codigo = codigo_generado WHERE idusuario = usuario_id;
+    END IF;
+END $$
+
+DELIMITER $$
+create PROCEDURE BuscarUsuarioPorCorreoOTelefono(
+  IN pCorreoOrTelefono VARCHAR(255)
+)
+BEGIN
+  SELECT * FROM usuarios
+  WHERE email = pCorreoOrTelefono OR telefono = pCorreoOrTelefono;
+END $$
+
+
+DELIMITER $$
+CREATE PROCEDURE CambiarContrasena(IN pCorreoTelefono VARCHAR(255), IN pNuevaContrasena VARCHAR(255))
+BEGIN
+  DECLARE vUsuarioID INT;
+
+  -- Buscar al usuario por correo o teléfono
+  SELECT idusuario INTO vUsuarioID
+  FROM usuarios
+  WHERE email = pCorreoTelefono OR telefono = pCorreoTelefono;
+
+  -- Verificar si se encontró al usuario
+  IF vUsuarioID IS NOT NULL THEN
+    -- Actualizar la contraseña del usuario
+    UPDATE usuarios
+    -- SET claveacesso = SHA1(pNuevaContrasena)
+    SET claveacesso = pNuevaContrasena
+    WHERE idusuario = vUsuarioID;
+
+    SELECT 'Contraseña actualizada' AS mensaje;
+  ELSE
+    SELECT 'Usuario no encontrado' AS mensaje;
+  END IF;
+END $$
+
+call CambiarContrasena("987654321", "clavecambiada");
+
+DELIMITER $$
+
+CREATE PROCEDURE LimpiarCodigo(IN pCorreoTelefono VARCHAR(255))
+BEGIN
+  UPDATE usuarios
+  SET codigo = NULL
+  WHERE email = pCorreoTelefono OR telefono = pCorreoTelefono;
+  
+  SELECT 'Código limpiado' AS mensaje;
+END $$
+DELIMITER ;
+
+
+
+select * from usuarios;
+
+call BuscarUsuarioPorCorreoOTelefono("987654321");
+
+
+update usuarios 
+set telefono = "987654321"
+where idusuario = 1;
+
+CALL GenerarCodigoUsuario('987654321', '000000');
+
+
+
+
+
+
 
 use appstore;
 call spu_productos_listar_por_categoria(2);
@@ -172,8 +254,8 @@ update usuarios set
 	claveacesso = "$2y$10$.v7KLNpu6.uUnW5Wb7t0R.CY4ij4mS730s2VCTHcaNhVHFnslLdCC";
 
 select * from usuarios;
-'1', 'avatar1.jpg', '1', '1', 'Pérez', 'Juan', 'juan.perez@example.com', '$2y$10$.v7KLNpu6.uUnW5Wb7t0R.CY4ij4mS730s2VCTHcaNhVHFnslLdCC', '2023-10-24 20:29:14', NULL, NULL
 -- luis.gonzalez@example.com
 
+select * from galerias;
 
-DELIMITER $$
+delete from galerias where idgaleria in(20,21,22,23,24);

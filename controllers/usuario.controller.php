@@ -4,6 +4,7 @@ session_start();  //  Crea o hereda la sesión
 date_default_timezone_set("America/Lima");
 
 require_once '../models/Usuario.php';
+require_once '../test/email.php';
 
 if (isset($_POST['operacion'])) {
   $usuario = new Usuario;
@@ -76,10 +77,50 @@ if (isset($_POST['operacion'])) {
         }
       }
       echo json_encode($statusLogin);
+      break;
 
+    case 'generarCodigo':
+
+      $numero = mt_rand(100000, 999999);
+      $digitos = strval($numero);
+
+      $datosEnviar = [
+        "correoOrTelefono"   => $_POST["correoOrTelefono"],
+        "codigoSix"          => $digitos
+      ];
+
+      // enviamos el codigo al correo
+      enviarEmail($_POST["correoOrTelefono"], $digitos);
+
+      echo json_encode($usuario->generarCodigo($datosEnviar));
+
+      break;
     
+    case 'buscarPorCorreoTelefono':
+      $datosEnviar = [
+        "correoTelefono" => $_POST["correoTelefono"]];
+        echo json_encode($usuario -> buscarCorreoTelefono($datosEnviar));
+      break;
+    case 'cambiarClaveAcesso':
+      // $claveEncriptadaN = sha1($_POST['claveacesso']);
+      $claveEncriptadaN = password_hash($_POST['claveacesso'], PASSWORD_DEFAULT);
 
-    default:
+      $datosEnviar = [
+        'correoOrTelefono' => $_POST["correoOrTelefono"],
+        // 'claveacesso'       => $_POST['claveacesso']
+        'claveacesso'       => $claveEncriptadaN
+      ];
+
+      $datosCodigoNull = [
+        'correoOrTelefono' => $_POST["correoOrTelefono"]
+      ];
+
+      $usuario -> cambiarCodigoNull($datosCodigoNull);
+
+      echo json_encode($usuario -> cambiarClave($datosEnviar));
+      break;
+
+      default:
       break;
   }
 }

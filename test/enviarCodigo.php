@@ -25,14 +25,13 @@ require_once '../test/email.php';
     <div class="row">
 
       <h1 class="text-center mb-3 mt-4">Introduce tu correo</h1>
-      <form action="">
+      <form action="" id="form-codigo">
 
         <div class="input input-lg mb-3">
-          <input type="email" class="form-control" id="correoRecuperar" required>
+          <input type="text" class="form-control" id="correoRecuperar" required>
         </div>
         <div class="d-grid">
-          <button type="button" class="btn btn-primary" id="enviar-codigo">Enviar el codigo</button>
-
+          <button type="submit" class="btn btn-primary" id="enviar-codigo">Enviar el codigo</button>
         </div>
 
       </form>
@@ -50,42 +49,37 @@ require_once '../test/email.php';
   </script>
 
   <script>
-    // Notesé que también en este caso `min` será incluido y `max` excluido
-    function getRandomInt(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min) + min);
-    }
-
-
-    // console.log(getRandomInt(100000, 999999));
-
-    function $(id) {
+    function $(id){
       return document.querySelector(id);
     }
 
-    function obtenerFiltro() {
-      $correo = $("#correoRecuperar").value;
-      return $correo;
-    }
+    $("#form-codigo").addEventListener("submit", (event) => {
+      event.preventDefault();
+      
+      const parametros = new FormData();
+      parametros.append("operacion", "generarCodigo");
+      parametros.append("correoOrTelefono", $("#correoRecuperar").value);
 
-    //  EVENTOS
-    $("#enviar-codigo").addEventListener("click", () => {
-      correo = obtenerFiltro();
+      const correo  = $("#correoRecuperar").value;
+      fetch(`../controllers/usuario.controller.php`, {
+        method: 'POST',
+        body: parametros
+      }).
+      then(respuesta => respuesta.json()).
+      then(
+        data => {
+          console.log(data);
 
-      // console.log(getRandomInt(100000, 999999));
-      codigo = getRandomInt(100000, 999999);
-      console.log(codigo.toString());
-
-      // console.log(obtenerFiltro());
-
-      $respuesta = <?php enviarEmail($correo, $codigo); ?>
-
-      var_dump($respuesta);
-
-
-
-    });
+          $("#correoRecuperar").value = '';
+          alert("Codigo Generado");
+          window.location.href = `restablecer_contrasena.php?correo=${correo}`;
+        }
+      ).
+      catch(e => {
+          console.log(e)
+        }
+      );
+    })
   </script>
 
 </body>

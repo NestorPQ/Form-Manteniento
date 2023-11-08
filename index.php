@@ -36,7 +36,7 @@ if (isset($_SESSION["status"]) && $_SESSION["status"]) {
           </div>
 
           <div class="mb-3">
-            <label for="claveacesso" v>Clave Acceso</label>
+            <label for="claveacesso">Clave Acceso</label>
             <input type="password" class="form-control" id="claveacesso" required>
           </div>
 
@@ -47,7 +47,7 @@ if (isset($_SESSION["status"]) && $_SESSION["status"]) {
           </div>
 
           <div id="mb-3">
-            <label for="">¿Olidaste tu contraseña?      <a href="./test/recuperarContrasena.php"><strong>   Recuperalo</strong></a></label>
+            <label for="">¿Olidaste tu contraseña? <a href="./test/recuperarContrasena.php"><strong> Recuperalo</strong></a></label>
           </div>
 
         </form>
@@ -86,8 +86,9 @@ if (isset($_SESSION["status"]) && $_SESSION["status"]) {
           body: parametros
         })
         .then(
-          respuesta => respuesta.json()).
-      then(
+          respuesta => respuesta.json()
+          )
+        .then(
           datos => {
             // console.log(datos)
             if (datos.acceso) {

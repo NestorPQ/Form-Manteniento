@@ -36,6 +36,8 @@ create table usuarios(
 	create_at		datetime 		not null	default now(),
 	update_at		datetime 		null,
 	inactive_at		datetime 		null,
+	telefono varchar(9) not null,
+	codigo varchar(6) null,
     constraint		fk_idrol_usu	foreign key (idrol) references roles (idrol),
     constraint		fk_idnacionalidad_usu	foreign key (idnacionalidad) references nacionalidades (idnacionalidad),
     constraint		ch_email_usu	check (email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$')

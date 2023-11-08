@@ -75,4 +75,65 @@ class Usuario extends Conexion
     }
   }
 
+  public function generarCodigo($datos = []){
+    try {
+      //code...
+      $consulta = $this->conexion->prepare("CALL GenerarCodigoUsuario(?,?)");
+      $consulta->execute(
+        array(
+            $datos["correoOrTelefono"],
+            $datos["codigoSix"]
+        )
+      );
+      return $consulta -> fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+      die($e -> getMessage());
+    }
+  }
+
+  public function buscarCorreoTelefono($datos = []){
+    try {
+      $consulta = $this->conexion->prepare("call BuscarUsuarioPorCorreoOTelefono(?);");
+      $consulta->execute(
+        array(
+          $datos["correoTelefono"]
+        )
+      );
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+      die($e->getMessage());
+    }
+  }
+
+  public function cambiarClave($datos = []){
+    try {
+      //code...
+      $consulta = $this->conexion->prepare("call CambiarContrasena(?,?)");
+      $consulta->execute(
+        array(
+            $datos["correoOrTelefono"],
+            $datos["claveacesso"]
+        )
+      );
+      return $consulta -> fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+      die($e -> getMessage());
+    }
+  }
+
+  public function cambiarCodigoNull($datos = []){
+    try {
+      //code...
+      $consulta = $this->conexion->prepare("call LimpiarCodigo(?)");
+      $consulta->execute(
+        array(
+            $datos["correoOrTelefono"]
+        )
+      );
+      return $consulta -> fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+      die($e -> getMessage());
+    }
+  }
+
 }

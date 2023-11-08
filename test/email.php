@@ -43,15 +43,11 @@ function enviarEmail($correo = "", $codigo = "")
 
         //Content
         $mail->isHTML(true);                                  //Set email format to HTML
-        $mail->Subject = 'Este es tu correo de resuperacion no los compartas con nadie';
+        $mail->Subject = 'codigo de recuperacion';
         $mail->Body    = '
-        <h1>
-            CODIGO DE CONFIRMACION
-       <p>
-            Este mensaje contiene
-        </p>
+        <h2>CODIGO DE CONFIRMACION</h2>
         <h3>
-            Tu codigo es ' . $codigo  .'
+            Tu codigo es ' . $codigo  . ' no lo compartas con nadie
         </h3>
         ';
         $mail->AltBody = 'Tu correo no soporta HTML, por favor comunicarse...';
@@ -67,6 +63,6 @@ function enviarEmail($correo = "", $codigo = "")
 }
 
 
-// $respuesta =  enviarEmail("1208003@senati.pe", "123456");
+// $respuesta =  enviarEmail("1208003@senati.pe", "666666");
 
 // var_dump($respuesta);

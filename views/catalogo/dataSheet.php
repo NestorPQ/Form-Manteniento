@@ -40,35 +40,20 @@
     <h5><strong>Nombre del producto: </strong><span id="productoNombre"></span></h5>
 
 
-    <h4 class="mt-4">Caracteristicas:</h4>
-    <div id="especificaciones-producto" class="row row-cols-1 row-cols-md-3 g-4">
+    <h4 class="mt-4">Características:</h4>
+    <div id="especificaciones-producto" class="row row-cols-1 row-cols-md-3 g-2">
       <!-- Las tarjetas se agregarán aquí -->
     </div>
 
-    <div id="sin-productos" class="alert alert-warning mt-3">
+    <div id="sin-productos" class="alert alert-warning mt-4 p-2">
       <h4>Sin características</h4>
     </div>
 
-    <div class="card">
+    <div class="card mb-4 mt-3">
       <div class="table-responsive">
-        <table class="table table-bordered table-sm ">
-          <tbody>
-            <tr>
-              <th>Característica</th>
-              <th>Valor</th>
-            </tr>
-            <tr>
-              <td>Marca</td>
-              <td>Samsung</td>
-            </tr>
-            <tr>
-              <td>Color</td>
-              <td>Plateado</td>
-            </tr>
-            <tr>
-              <td>Peso</td>
-              <td>2 kg</td>
-            </tr>
+        <table class="table table-bordered table-sm table-striped">
+          <tbody id="tabla-caracteristicas">
+            <!-- Las características se cargarán aquí -->
           </tbody>
         </table>
       </div>
@@ -92,11 +77,33 @@
     </a>
 
 
+    <!-- Modal Body -->
+    <div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="miModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <!-- <h5 class="modal-title" id="modalTitleId">Modal title</h5> -->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <img style="width: 100%;" src="" alt="" id="visor">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal">Cerrar</button>
+            <!-- <button type="button" class="btn btn-primary">Save</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+
 
 
   </div>
 
   <script>
+    // const modalVisor = new bootstrap.Modal(document.getElementById('modal-visor'));
+
     function $(id) {
       return document.querySelector(id);
     }
@@ -130,12 +137,14 @@
         })
         .then(response => response.json())
         .then(data => {
+          // console.log(data)
           // Comprueba si hay imágenes
           if (data.length > 0) {
             galeriaImagenes.innerHTML = ''; // Borra el contenido existente
 
             // Recorre las imágenes y crea tarjetas (cards) para mostrarlas
             data.forEach(imagen => {
+              // console.log(imagen);
               // Crea una tarjeta (card) de Bootstrap
               const card = document.createElement('div');
               card.classList.add('col');
@@ -143,7 +152,9 @@
               // Crea la estructura de la tarjeta
               card.innerHTML = `
             <div class="card">
-              <img src="../../images/images-producto/${imagen.imagen}" class="card-img-top" alt="Imagen de la galería">
+              <a href="#" >
+                <img src="../../images/images-producto/${imagen.imagen}" class="card-img-top linkImagen" alt="Imagen de la galería" data-url="${imagen.imagen}">
+              </a>
             </div>
           `;
 
@@ -161,18 +172,83 @@
         });
     }
 
-    function obtenerCaracteristicasGaleria() {
-      const galeriaImagenes = document.getElementById('especificaciones-producto');
-      const mensajeSinImagen = $("#sin-productos");
+    function obtenerCaracteristicasProducto() {
+      const tablaCaracteristicas = document.getElementById('tabla-caracteristicas');
+      const mensajeSinCaracteristicas = $("#sin-productos");
+
       const parametros = new FormData();
       parametros.append('operacion', 'listarCaracteristica');
       parametros.append('idproducto', productoId);
 
+      // Realiza una solicitud para obtener las características del producto
+      fetch(`../../controllers/producto.controller.php?productoId=${productoId}`, {
+          method: "POST",
+          body: parametros
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.length > 0) {
+            // Si hay características, crea filas en la tabla
+            data.forEach(caracteristica => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${caracteristica.caracteristica}</td>
+                <td>${caracteristica.valor}</td>
+              `;
+              tablaCaracteristicas.appendChild(row);
+            });
+
+            mensajeSinCaracteristicas.classList.add("d-none");
+          } else {
+            mensajeSinCaracteristicas.classList.remove("d-none");
+          }
+        })
+        .catch(error => {
+          console.error('Error al obtener características: ', error);
+          mensajeSinCaracteristicas.classList.remove("d-none");
+        });
     }
+
+    const galeriaImagenes = document.getElementById('galeria-imagenes');
+    // Agrega un manejador de eventos a las imágenes
+    galeriaImagenes.addEventListener("click", (event) => {
+      if (event.target.classList.contains("linkImagen")) {
+        const ruta = event.target.dataset.url;
+        const visor = document.querySelector("#visor");
+
+        if (ruta) {
+          // Verificar si la ruta de la imagen existe antes de asignarla al atributo "src"
+          fetch(`../../images/images-producto/${ruta}`)
+            .then((response) => {
+              console.log(ruta);
+              if (response.status === 200) {
+                // Si la ruta existe, establece la imagen en el modal
+                visor.setAttribute("src", `../../images/images-producto/${ruta}`);
+              } else {
+                // Si la ruta no existe, muestra "SIN FOTO"
+                visor.setAttribute("src", "../../images/image-default.png"); // Limpia cualquier imagen anterior
+                visor.textContent = "SIN FOTO";
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        } else {
+          // Si no hay ruta de imagen, muestra "SIN FOTO"
+          visor.setAttribute("src", "../../images/image-default.png");
+          visor.textContent = "SIN FOTO";
+        }
+
+        // Abre el modal
+        const myModal = new bootstrap.Modal(document.getElementById('miModal'));
+        myModal.show();
+      }
+    });
+
+    obtenerCaracteristicasProducto();
 
     // Llama a la función para obtener y mostrar las imágenes
     obtenerImagenesGaleria();
-    obtenerCaracteristicasGaleria();
   </script>
 </body>
 
